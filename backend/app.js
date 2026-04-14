@@ -6,6 +6,7 @@ import employeesRoutes from "./src/routes/employees.js"
 import reviewsRoutes from "./src/routes/reviews.js"
 import customerRoutes from "./src/routes/customer.js"
 import registerCustomerRoutes from "./src/routes/registerCustomer.js"
+import registerEmployeeRoutes from "./src/routes/registerEmployee.js"
 
 //Creo una constante que es igual a la libreria express
 const app = express();
@@ -21,5 +22,6 @@ app.use("/api/employee", employeesRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/registerCustomer", registerCustomerRoutes);
+app.use("/api/registerEmployee", registerEmployeeRoutes);
 
 export default app;

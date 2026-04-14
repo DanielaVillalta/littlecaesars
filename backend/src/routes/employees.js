@@ -6,8 +6,8 @@ import employeesController from "../controllers/employeesControler.js"
 const router = express.Router();
 
 router.route("/")
-.get(employeesController.getEmployees)
-.post(employeesController.insertEmployees);
+.get(employeesController.getEmployees) /*
+.post(employeesController.insertEmployees);*/
 
 router.route("/:id")
 .put(employeesController.updateEmployee)

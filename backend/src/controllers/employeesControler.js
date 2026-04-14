@@ -16,7 +16,7 @@ employeesController.getEmployees = async (req, res) => {
 };
 
 //INSERT
-employeesController.insertEmployees = async (req, res) => {
+/*employeesController.insertEmployees = async (req, res) => {
   try {
     //#1- Solicitamos los datos a guardar
     let {
@@ -74,7 +74,7 @@ employeesController.insertEmployees = async (req, res) => {
     console.log("error" + error);
     return res.status(500).json({ message: "Internal server error" });
   }
-};
+};*/
 
 //DELETE
 employeesController.deleteEmployees = async (req, res) => {
