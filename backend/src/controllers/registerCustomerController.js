@@ -6,6 +6,8 @@ import bcryptjs from "bcryptjs"; //Encriptar contraseña
 import customerModel from "../models/customers.js";
 
 import { config } from "../../config.js";
+import { info } from "console";
+import { register } from "module";
 
 //array de funciones
 const registerCustomerController = {};
@@ -56,8 +58,86 @@ registerCustomerController.register = async (req, res) => {
 
         //guardamos el token en una cookie
         res.cookie("registrationCookie", token, {maxAge: 15 *60 * 1000})
+
+        //ENVIAR CORREO ELECTRÓNICO
+        //#1- Transporter -> ¿Quién lo envía?
+        const transporter = nodemailer.createTransport({
+            service: "gmail",
+            auth: {
+                user: config.email.user_email,
+                pass: config.email.user_password
+            }
+        });
+
+        //#2- mailOptions -> ¿Quién lo recibe y cómo?
+        const mailOptions = {
+            from: config.email.user_email,
+            to: email,
+            subject: "Verificación de cuenta",
+            text: "Para verificar tu cuenta, utiliza este código: " + randomCode + "expita en 15 minutos"
+        };
+
+        //#3- Enviar el correo electrónico
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("error");
+                return res.status(500).json({ message: "Error sending email" });
+            }
+            return res.status(200).json({ message: "Email sent" });
+        })
+        
     } catch (error) {
-        console.error("Error registering customer:", error);
-        return res.status(500).json({ message: "Internal server error" });
+        console.log("error" + error)
+        return res.status(500).json({ message: "Internal server error" })
     }
 }
+
+//VERIFICAR EL CÓDIGO QUE ACABAMOS DE ENVIAR
+registerCustomerController.verifyCode = async (req, res) => {
+    try {
+        //Solicitamos el código que el usuario escribió en el frontend
+        const {verificationCodeRequest} = req.body;
+
+        //Obtener el token de las cookies
+        const token = req.cookies.registrationCookie
+
+        //Extraer todos los datos del token
+        const decoded = jsonwebtoken.verify(token, config.JWT.secret);
+        const {
+            randomCode: storedCode,
+            name,
+            lastName,
+            birthdate,
+            email,
+            password,
+            isVerified,
+            loginAttemps,
+            timeOut
+        } = decoded
+
+        if(verificationCodeRequest !== storedCode) {
+            return res.status(400).json({ message: "Invalid code" })
+        }
+
+        //Si todo está bien, y el usuario, lo registramos en la DB
+        const newCustomer = customerModel({
+            name,
+            lastName,
+            birthdate,
+            email,
+            password,
+            isVerified: true
+        });
+
+        await newCustomer.save();
+
+        res.clearCookie("registrationCookie");
+
+        return res.status(201).json({ message: "Customer registered" })
+    } catch (error) {
+        console.log("error" + error);
+        return res.status(500).json({ message: "Internal server error" });
+    }
+};
+
+export default registerCustomerController;
