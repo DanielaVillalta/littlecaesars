@@ -34,7 +34,7 @@ registerCustomerController.register = async (req, res) => {
         }
 
         //Encriptar contraseña
-        const passwordHash = await bcryptjs.hash(password, 10);
+        const passwordHashed = await bcryptjs.hash(password, 10);
 
         //Generar un código aleatorio
         const randomCode = crypto.randomBytes(3).toString("hex");
@@ -64,8 +64,8 @@ registerCustomerController.register = async (req, res) => {
         const transporter = nodemailer.createTransport({
             service: "gmail",
             auth: {
-                user: config.email.user_email,
-                pass: config.email.user_password
+               user: config.email.user_email,
+               pass: config.email.user_password
             }
         });
 
@@ -74,20 +74,20 @@ registerCustomerController.register = async (req, res) => {
             from: config.email.user_email,
             to: email,
             subject: "Verificación de cuenta",
-            text: "Para verificar tu cuenta, utiliza este código: " + randomCode + "expita en 15 minutos"
+            text: "Para verificar tu cuenta, utiliza este código: " + randomCode + " expira en 15 minutos"
         };
 
         //#3- Enviar el correo electrónico
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
-                console.error("error");
+                console.error("error" + error);
                 return res.status(500).json({ message: "Error sending email" });
             }
             return res.status(200).json({ message: "Email sent" });
         })
         
     } catch (error) {
-        console.log("error" + error)
+        console.error("error" + error)
         return res.status(500).json({ message: "Internal server error" })
     }
 }

@@ -10,9 +10,9 @@ Campos:
     timeOut
 */
 
-import {Shema, model} from "mongoose"
+import mongoose, { Schema, model } from "mongoose";
 
-const customersSchema = new Shema ({
+const customersSchema = new Schema ({
     name: {type: String},
     lastname: {type: String},
     birthdate: {type: Date},
