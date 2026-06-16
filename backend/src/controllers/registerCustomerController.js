@@ -8,6 +8,7 @@ import customerModel from "../models/customers.js";
 import { config } from "../../config.js";
 import { info } from "console";
 import { register } from "module";
+import HTMLRegisterEmail from "../utils/sendMailRegister.js"
 
 //array de funciones
 const registerCustomerController = {};
@@ -74,7 +75,8 @@ registerCustomerController.register = async (req, res) => {
             from: config.email.user_email,
             to: email,
             subject: "Verificación de cuenta",
-            text: "Para verificar tu cuenta, utiliza este código: " + randomCode + " expira en 15 minutos"
+            body: "El código vence en 15 minutos",
+            html: HTMLRegisterEmail(randomCode)
         };
 
         //#3- Enviar el correo electrónico

@@ -16,6 +16,9 @@ import providerRoutes from "./src/routes/provider.js"
 import cartRoutes from "./src/routes/cart.js"
 import wompiRoutes from "./src/routes/wompi.js"
 import deliveriesRoutes from "./src/routes/deliveries.js"
+import { validateAuthCookie } from './src/middlewares/authMiddleware.js';
+import registerAdminRoutes from "./src/routes/registerAdmin.js"
+import loginAdminRoutes from "./src/routes/loginAdmin.js"
 
 //Creo una constante que es igual a la libreria express
 const app = express();
@@ -32,8 +35,8 @@ app.use(cors({
 }))
 
 app.use("/api/pizzas", pizzasRoutes);
-app.use("/api/branches", branchesRoutes);
-app.use("/api/employee", employeesRoutes);
+app.use("/api/branches", validateAuthCookie(["admin"]), branchesRoutes);
+app.use("/api/employee", validateAuthCookie(["admin"]), employeesRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/registerCustomer", registerCustomerRoutes);
@@ -42,8 +45,10 @@ app.use("/api/loginCustomers", loginCustomerRoutes);
 app.use("/api/logout", logoutRoutes);
 app.use("/api/recoveryPassword", recoveryPasswordRoutes);
 app.use("/api/providers", providerRoutes);
-app.use("/api/cart", cartRoutes)
-app.use("/api/wompi", wompiRoutes)
-app.use("/api/deliveries", deliveriesRoutes)
+app.use("/api/cart", cartRoutes);
+app.use("/api/wompi", wompiRoutes);
+app.use("/api/deliveries", deliveriesRoutes);
+app.use("/api/registerAdmin", registerAdminRoutes);
+app.use("/api/loginAdmin", loginAdminRoutes);
 
 export default app;

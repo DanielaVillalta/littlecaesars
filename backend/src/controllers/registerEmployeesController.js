@@ -6,6 +6,7 @@ import bcryptjs from "bcryptjs"; //Encriptar contraseña
 import employeesModel from "../models/employees.js";
 
 import { config } from "../../config.js";
+import HTMLRegisterEmail from "../utils/sendMailRegister.js"
 
 const registerEmployeesController = {};
 
@@ -53,7 +54,8 @@ registerEmployeesController.register = async (req, res) => {
             from: config.email.user_email,
             to: email,
             subject: "Verificación de cuenta",
-            text: `Tu código de verificación es: ${randomCode}`
+            body: "El código vence en 15 minutos",
+            html: HTMLRegisterEmail(randomCode)
         };
 
         transporter.sendMail(mailOptions, (error, info) => {
