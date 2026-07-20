@@ -1,6 +1,12 @@
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from "cors";
+import swaggerUi from "swagger-ui-express"
+
+import { validateAuthCookie } from './src/middlewares/authMiddleware.js';
+import limiter from './src/middlewares/limiter.js';
+
+import swaggerDocument from "./src/utils/montetabor-60e-littlecaesars-1.0-resolved.json" with {type: "json"}
 
 import pizzasRoutes from "./src/routes/pizza.js";
 import branchesRoutes from "./src/routes/branches.js"
@@ -16,7 +22,6 @@ import providerRoutes from "./src/routes/provider.js"
 import cartRoutes from "./src/routes/cart.js"
 import wompiRoutes from "./src/routes/wompi.js"
 import deliveriesRoutes from "./src/routes/deliveries.js"
-import { validateAuthCookie } from './src/middlewares/authMiddleware.js';
 import registerAdminRoutes from "./src/routes/registerAdmin.js"
 import loginAdminRoutes from "./src/routes/loginAdmin.js"
 
@@ -34,9 +39,13 @@ app.use(cors({
     credentials: true
 }))
 
+app.use(limiter)
+
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+
 app.use("/api/pizzas", pizzasRoutes);
 app.use("/api/branches", validateAuthCookie(["admin"]), branchesRoutes);
-app.use("/api/employee", validateAuthCookie(["admin"]), employeesRoutes);
+app.use("/api/employees", validateAuthCookie(["admin"]), employeesRoutes);
 app.use("/api/reviews", reviewsRoutes);
 app.use("/api/customers", customerRoutes);
 app.use("/api/registerCustomer", registerCustomerRoutes);
