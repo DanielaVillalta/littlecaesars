@@ -37,12 +37,20 @@ recoveryPasswordController.requestCOde = async (req, res) => {
             { expiresIn: "15m" }
         )
 
-        res.cookie("recoveryCookie", token, { maxAge: 15 * 60 * 1000 });
+        res.cookie("recoveryCookie", token, {
+            maxAge: 15 * 60 * 1000,
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
+        });
 
         //Enviar el código por correo electrónico
         //#1- ¿Quién lo envía?
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            family: 4,
             auth: {
                 user: config.email.user_email,
                 pass: config.email.user_password
@@ -51,7 +59,7 @@ recoveryPasswordController.requestCOde = async (req, res) => {
 
         //¿Quién lo recibe y cómo lo recibe?
         const mailOptions = {
-            fro: config.email.user_email,
+            from: config.email.user_email,
             to: email,
             subject: "Recuperación de contraseña",
             body: "El código vence en 15 minutos",
@@ -100,7 +108,12 @@ recoveryPasswordController.verifyCode = async (req, res) => {
             { expiresIn: "15m" }
         )
 
-        res.cookie("recoveryCookie", newToken, { maxAge: 15 * 60 * 1000 });
+        res.cookie("recoveryCookie", newToken, {
+            maxAge: 15 * 60 * 1000,
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
+        });
 
         return res.status(200).json({ message: "Code verified successfully" })
     } catch (error) {

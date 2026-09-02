@@ -67,7 +67,11 @@ loginCustomerController.login = async (req, res) => {
         );
 
         //El token lo guardamos en una cookie
-        res.cookie("authCookie", token)
+        res.cookie("authCookie", token, {
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
+        })
 
         return res.status(200).json({ message: "Login successfully" });
     } catch (error) {

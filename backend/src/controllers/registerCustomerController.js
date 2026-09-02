@@ -58,12 +58,20 @@ registerCustomerController.register = async (req, res) => {
         );
 
         //guardamos el token en una cookie
-        res.cookie("registrationCookie", token, {maxAge: 15 *60 * 1000})
+        res.cookie("registrationCookie", token, {
+            maxAge: 15 * 60 * 1000,
+            httpOnly: true,
+            sameSite: "none",
+            secure: true
+        })
 
         //ENVIAR CORREO ELECTRÓNICO
         //#1- Transporter -> ¿Quién lo envía?
         const transporter = nodemailer.createTransport({
-            service: "gmail",
+            host: "smtp.gmail.com",
+            port: 465,
+            secure: true,
+            family: 4,
             auth: {
                user: config.email.user_email,
                pass: config.email.user_password

@@ -28,13 +28,15 @@ import loginAdminRoutes from "./src/routes/loginAdmin.js"
 //Creo una constante que es igual a la libreria express
 const app = express();
 
+app.set("trust proxy", 1);
+
 app.use(cookieParser());
 
 //Para que la API acepte JSON
 app.use(express.json());
 
 app.use(cors({
-    origin: ["http://localhost:5173", "http://localhost:5174"],
+    origin: ["http://localhost:5173", "http://localhost:5174", "http://localhost:8081"],
     //Permitir el envío de cookies y credenciales
     credentials: true
 }))
